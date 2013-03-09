@@ -1,6 +1,6 @@
 /**************************************************** 
 ASSIGNMENT #3 :  Proxy Cache Server                                                               
-NAME          :  ¹èÃ¶Èñ                                                                           
+NAME          :  ï¿½ï¿½Ã¶ï¿½ï¿½                                                                           
                                                                       
 DATE          :  2000. 12. 1                                                                      
 COMPILER      :  UNIX gcc 2.8.1,  LINUX gcc 2.9.0                                                 
@@ -11,11 +11,11 @@ FILE          :  socket.c,  cache.c,  md5.c,  proxy.h
 #include "proxy.h"
 
 
-void  CACHEING( char *URL, char *buf )
+void  cacheing( char *URL, char *buf )
 {
     int  qlog; 
     
-    int x,         i = 1900;                     //Å¸ÀÓÇÔ¼ö»ç¿ëÀ» À§ÇÑ º¯¼ö ¼±¾ðµé.
+    int x,         i = 1900;                     //Å¸ï¿½ï¿½ï¿½Ô¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
     time_t             Time;                     //
     struct tm            *T;                     //
 
@@ -24,22 +24,22 @@ void  CACHEING( char *URL, char *buf )
     char dir2[10] =      "cache";           // ./cache/x/y
     char whole_dir[35] = "cache";           // ./cache/x/y/zabcdefg...
     
-    char    log_buf[128] = {'\0'};           // sprintf¿¡ »ç¿ëµÉ ¹öÆÛ Ä³¸¯ÅÍ º¯¼ö
-    char  hfile_buf[128] = {'\0'};           // ÀÏ´Ü NULL·Î ÃÊ±âÈ­ÇÏ¿´½À´Ï´Ù.
-    char hashed_url[128] = {'\0'};       //hashµÇ¾î ³ª¿Ã º¯¼ö.
+    char    log_buf[128] = {'\0'};           // sprintfï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ Ä³ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
+    char  hfile_buf[128] = {'\0'};           // ï¿½Ï´ï¿½ NULLï¿½ï¿½ ï¿½Ê±ï¿½È­ï¿½Ï¿ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+    char hashed_url[128] = {'\0'};       //hashï¿½Ç¾ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
 
     time( &Time );
     T = localtime( &Time );
 
-    convert_md5( URL, hashed_url );  //url -> hashed_url º¯È¯
+    convert_md5( URL, hashed_url );  //url -> hashed_url ï¿½ï¿½È¯
     
-    dir1[5] =           '/';         //Ã¹¹øÂ° µð·ºÅä¸®("cache/x")
-    dir1[6] = hashed_url[0];         //cache...´ÙÀ½¿¡ ¿À´Â ºÎºÐÀÌ¹Ç·Î
-    dir1[7] =          '\0';         //5¹øÂ° º¯À§ºÎÅÍ ´ëÀÔ½ÃÀÛÇÑ´Ù.
+    dir1[5] =           '/';         //Ã¹ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ä¸®("cache/x")
+    dir1[6] = hashed_url[0];         //cache...ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Îºï¿½ï¿½Ì¹Ç·ï¿½
+    dir1[7] =          '\0';         //5ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ô½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 
     dir2[5] =           '/';      
-    dir2[6] = hashed_url[0];         //Ã¹¹øÂ°¿¡ ÀÌ¾î µÎ¹øÂ° µð·ºÅä¸®¸íÀ» 
-    dir2[7] = hashed_url[1];         //ÀÌ¾î ºÙÀÓ.("cache/x/y")
+    dir2[6] = hashed_url[0];         //Ã¹ï¿½ï¿½Â°ï¿½ï¿½ ï¿½Ì¾ï¿½ ï¿½Î¹ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ï¿½ï¿½ 
+    dir2[7] = hashed_url[1];         //ï¿½Ì¾ï¿½ ï¿½ï¿½ï¿½ï¿½.("cache/x/y")
     dir2[8] = hashed_url[2];
     dir2[9] =          '\0'; 
 
@@ -49,13 +49,13 @@ void  CACHEING( char *URL, char *buf )
 
     qlog = open("log", O_WRONLY | O_CREAT | O_APPEND, 0666 ); 
             
-    if( IS_HIT( dir0, dir1, dir2, whole_dir ) == 0 )     // MISS
+    if( is_hit( dir0, dir1, dir2, whole_dir ) == 0 )     // MISS
     {
         sprintf( log_buf, "%s - [%d/%d/%d %d:%d:%d]\n", URL, i+T->tm_year,
            T->tm_mon+1, T->tm_mday, T->tm_hour, T->tm_min, T->tm_sec );
         write( qlog, log_buf, 128 );
 
-        CONNECT_WEB_SERV(buf, whole_dir);
+        connect_web_srv(buf, whole_dir);
     }
 
     else    	                                         // HIT
@@ -65,17 +65,17 @@ void  CACHEING( char *URL, char *buf )
             T->tm_sec );
         write( qlog, hfile_buf, 128 ); 	    
               
-        ACCESS_LOCAL_CACHE(whole_dir); 
+        access_local_cache(whole_dir); 
     }
 
     close(qlog);
 
 }
 
-int IS_HIT( char *dir0, char *dir1, char *dir2, char *whole_dir )
+int is_hit( char *dir0, char *dir1, char *dir2, char *whole_dir )
 {
-    struct dirent                                 //µð·ºÅä¸®¸¦ ÀÐ±âÀ§ÇÑ Çì´õ¿¡ Á¤ÀÇµÈ 
-              *f_cur_dirir,                              //±¸Á¶Ã¼¿Í Æ÷ÀÎÅÍ º¯¼öµé.
+    struct dirent                                 //ï¿½ï¿½ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½Ð±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Çµï¿½ 
+              *f_cur_dirir,                              //ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
        	      *f_dir0, 
               *f_dir1, 
 	      *f_dir2;
@@ -86,19 +86,19 @@ int IS_HIT( char *dir0, char *dir1, char *dir2, char *whole_dir )
     DIR       *d_dir2 = NULL;
 
     int n, is_empty, tmp,  i = 0;
-    int flgC =    0;                    //µð·ºÅä¸® Á¸Àç¿©ºÎ¸¦ °¡¸®´Â flagµé.
-    int flg0 =    0;                    // ÃÊ±â°ªÀº 0À¸·Î ¼³Á¤.
-    int flg1 =    0;                    // cache, dir1, dir2¸¦ ÀÐ±âÀ§ÇÏ¿© 3°³.
+    int flgC =    0;                    //ï¿½ï¿½ï¿½ï¿½ï¿½ä¸® ï¿½ï¿½ï¿½ç¿©ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ flagï¿½ï¿½.
+    int flg0 =    0;                    // ï¿½Ê±â°ªï¿½ï¿½ 0ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.
+    int flg1 =    0;                    // cache, dir1, dir2ï¿½ï¿½ ï¿½Ð±ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ 3ï¿½ï¿½.
 
     char *temp;
-    char *cur_dir = ".";                  // <- ÇöÀçÀÇ µð·ºÅä¸® (.)
-    char first_dir[2]       = {'\0'};   // À§¿¡¼­ ¼³¸íÇÑ cache±âÁØ Àý´ë°æ·Î¸íÀÌ 
-    char second_dir[2]      = {'\0'};   // ¾Æ´Ñ ±×°Íµé°ú ºñ±³ÇÏ¿© °Ë»öµÇ¾îÁú 
-    char last_file_name[25] = {'\0'};   // °³º°ÀûÀÎ µð·ºÅä¸® ÀÌ¸§À» ÀúÀåÇÒ º¯¼öµé.
+    char *cur_dir = ".";                  // <- ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ä¸® (.)
+    char first_dir[2]       = {'\0'};   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ cacheï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Î¸ï¿½ï¿½ï¿½ 
+    char second_dir[2]      = {'\0'};   // ï¿½Æ´ï¿½ ï¿½×°Íµï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Ë»ï¿½ï¿½Ç¾ï¿½ï¿½ï¿½ 
+    char last_file_name[25] = {'\0'};   // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ä¸® ï¿½Ì¸ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 
-    first_dir[0]  = whole_dir[6];  //ÀüÃ¼ °æ·Î¸íÀÇ 6¹øÂ° º¯À§´Â ¹Ù·Î Ã¹¹øÂ° ÇÏÀ§ 
-    second_dir[0] = whole_dir[8];  //µð·ºÅä¸®ÀÇ ÀÌ¸§. µÎ¹øÂ°µµ ¸¶Âù°¡Áö. 
-    for( n=0; n<24; n++ ) last_file_name[n] = whole_dir[n+10]; //¸¶Áö¸·, ÆÄÀÏÀÌ¸§.
+    first_dir[0]  = whole_dir[6];  //ï¿½ï¿½Ã¼ ï¿½ï¿½ï¿½Î¸ï¿½ï¿½ï¿½ 6ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù·ï¿½ Ã¹ï¿½ï¿½Â° ï¿½ï¿½ï¿½ï¿½ 
+    second_dir[0] = whole_dir[8];  //ï¿½ï¿½ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½Ì¸ï¿½. ï¿½Î¹ï¿½Â°ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. 
+    for( n=0; n<24; n++ ) last_file_name[n] = whole_dir[n+10]; //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½ï¿½Ì¸ï¿½.
 
     d_cur_dirir = opendir(cur_dir);
     for( f_cur_dirir = readdir(d_cur_dirir); f_cur_dirir; f_cur_dirir = readdir(d_cur_dirir) )
@@ -124,8 +124,8 @@ int IS_HIT( char *dir0, char *dir1, char *dir2, char *whole_dir )
                               is_empty = open(whole_dir, O_RDONLY);
                               tmp = read(is_empty, temp, 1024);
 			      if( strcmp(f_dir2->d_name, last_file_name) == 0 && tmp!= 0)
-	                          i=1;     // ¿©±â±îÁö Èû°ã°Ô µé¾î¿Ô´Ù¸é ÇÔ¼ö´Â Hit           
-		          }                // ¶ó´Â ÀÇ¹Ì·Î ¾Æ·¡¿¡¼­ 1À» ¸®ÅÏÇÑ´Ù.
+	                          i=1;     // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô´Ù¸ï¿½ ï¿½Ô¼ï¿½ï¿½ï¿½ Hit           
+		          }                // ï¿½ï¿½ï¿½ï¿½ ï¿½Ç¹Ì·ï¿½ ï¿½Æ·ï¿½ï¿½ï¿½ï¿½ï¿½ 1ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ñ´ï¿½.
 		          closedir(d_dir2);
 		       }
 	            }
@@ -137,8 +137,8 @@ int IS_HIT( char *dir0, char *dir1, char *dir2, char *whole_dir )
     }
     closedir(d_cur_dirir);
     
-    /* ÇÃ·¡±× ¼³Á¤¿¡µû¶ó cacheÇÏÀ§ µð·ºÅä¸®¸¦ ¸¸µç´Ù. µð·ºÅä¸®°¡ 
-    Á¸ÀçÇÏ´Â °ÍÀº °áÄÚ ´Ù½Ã ¸¸µéÁö ¾Ê´Â´Ù.*/
+    /* ï¿½Ã·ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ cacheï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½. ï¿½ï¿½ï¿½ï¿½ï¿½ä¸®ï¿½ï¿½ 
+    ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´Â´ï¿½.*/
     if( flgC == 0 ) mkdir( dir0, S_IRWXU | S_IRGRP ); 
     if( flg0 == 0 ) mkdir( dir1, S_IRWXU | S_IRGRP );
     if( flg1 == 0 ) mkdir( dir2, S_IRWXU | S_IRGRP );  

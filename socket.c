@@ -1,6 +1,6 @@
 /************************************************************************************************
 ASSIGNMENT #3 :  Proxy Cache Server
-NAME          :  ¹èÃ¶Èñ
+NAME          :  ï¿½ï¿½Ã¶ï¿½ï¿½
 
 DATE          :  2000. 12. 1
 COMPILER      :  UNIX gcc 2.8.1,  LINUX gcc 2.9.0
@@ -8,15 +8,15 @@ FILE          :  socket.c,  cache.c,  md5.c,  proxy.h
 *************************************************************************************************/
 
 /*
- ½ÇÇà½Ã logÆÄÀÏ »ý¼º ±¸ÇöºÎ´Â ±×´ë·Î µÎ¾ú½À´Ï´Ù.
- Á¸ÀçÇÏÁö ¾Ê´Â urlÀÔ·Â½Ã coreÆÄÀÏÀÌ »ý¼ºµÇ¸é¼­ À¥ºê¶ó¿ìÁ®¿¡ ¶ß´Â ¿¡·¯¸Þ½ÃÁö ÆäÀÌÁö¸¦ proxy 
- server¿¡¼­ ÀÓÀÇ·Î ÅëÁ¦ÇØ¼­ º¸¿©ÁÖ´Â error.htmlÆÄÀÏ »ý¼º
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ logï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Î´ï¿½ ï¿½×´ï¿½ï¿½ï¿½ ï¿½Î¾ï¿½ï¿½ï¿½ï¿½Ï´ï¿½.
+ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ urlï¿½Ô·Â½ï¿½ coreï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç¸é¼­ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ß´ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Þ½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ proxy 
+ serverï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ö´ï¿½ error.htmlï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½
 */
 
 #include "proxy.h"
 
-static void SIG_CLD(int);   /* forkµÈ ÀÚ½Ä ÇÁ·Î¼¼½º Á¾·á Æ÷ÂøÇÔ¼ö.*/
-static void MY_ALARM(int);  /* socketÀ» ÅëÇÑ Åë½ÅÀÇ ¹«ÇÑ´ë±â ¹æÁö.*/
+static void sig_cld(int);   /* forkï¿½ï¿½ ï¿½Ú½ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ô¼ï¿½.*/
+static void my_alarm(int);  /* socketï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Ñ´ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.*/
 
 const int nSockVal = 1;
 
@@ -68,7 +68,7 @@ int main()
            accept_sd = accept(listen_sd, (struct sockaddr*) &cli, &n_cli); 
         }while(accept_sd == -1 && errno == (EINTR || EAGAIN) );  
 
-        if( signal(SIGCHLD, SIG_CLD) == SIG_ERR ) 
+        if( signal(SIGCHLD, sig_cld) == SIG_ERR ) 
             perror("signal error.");
 
 	if( (pid = fork()) < 0 )   
@@ -82,39 +82,39 @@ int main()
  
             close(listen_sd);   
 
-            signal(SIGALRM, MY_ALARM);  
+            signal(SIGALRM, my_alarm);  
                      
-            do{    /*ºê¶ó¿ìÁ®ÀÇ(Client) REQUEST¸¦ ¹Þ´Â´Ù.*/
+            do{    /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½(Client) REQUESTï¿½ï¿½ ï¿½Þ´Â´ï¿½.*/
                alarm(TIMEOUT);
                n = read(accept_sd, buf, BUFFSIZE);
             }while( n == -1 && errno == EINTR );  
         
-            /*À§ÀÇ REQUEST¸¦ hashing*/
-            hash_input = GET_HASH_URL(buf);
+            /*ï¿½ï¿½ï¿½ï¿½ REQUESTï¿½ï¿½ hashing*/
+            hash_input = get_hash_url(buf);
   
-            /*hashed URLÀ» ÀÔ·Â°ªÀ¸·Î ÀÛ¾÷*/
-            /*ÀÚ½ÄÀÌ ¼öÇàÇÏ´Â ÀÏÀÇ ´ëºÎºÐÀ» Ã³¸®ÇÏ´Â ÇÔ¼ö. (cache.c ÆÄÀÏ¿¡ ÀÖ½¿.) */
-            CACHEING( hash_input, buf ); 
+            /*hashed URLï¿½ï¿½ ï¿½Ô·Â°ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Û¾ï¿½*/
+            /*ï¿½Ú½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ Ã³ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½. (cache.c ï¿½ï¿½ï¿½Ï¿ï¿½ ï¿½Ö½ï¿½.) */
+            cacheing( hash_input, buf ); 
 
 	    exit(0);
 	}
 	/* Child exit             */
-        close(accept_sd); /*ºÎ¸ð ÇÁ·Î¼¼½ºÀÇ socket descriptor´Â ´Ý¾ÆÁÜ.*/
+        close(accept_sd); /*ï¿½Î¸ï¿½ ï¿½ï¿½ï¿½Î¼ï¿½ï¿½ï¿½ï¿½ï¿½ socket descriptorï¿½ï¿½ ï¿½Ý¾ï¿½ï¿½ï¿½.*/
     }                  
     /*-------- End of loop  -------------------------------------------------------------------*/
 }                    
 
 /***********************************************************************************************
-MISS ÀÏ¶§ ¼öÇàµÇ´Â ÇÔ¼ö·Î¼­ ¼­¹öÀÇ response(header, data)¸¦ ÀÐ¾î¿Í¼­ À¥ºê¶ó¿ìÁ®·Î Àü¼ÛÇÏ°í ´Ù½Ã cache
-·Î ÀúÀåÇÏ´Â ÀÏÀ» ÇÑ´Ù.
+MISS ï¿½Ï¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½ï¿½Î¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ response(header, data)ï¿½ï¿½ ï¿½Ð¾ï¿½ï¿½Í¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï°ï¿½ ï¿½Ù½ï¿½ cache
+ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ï´ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ñ´ï¿½.
 ************************************************************************************************/
-void  CONNECT_WEB_SERV( char *buf, char *whole_dir )
+void  connect_web_srv( char *buf, char *whole_dir )
 {
    int qfile, write_n, read_n, a, b; 
    char domain_name[DNSIZE], response[BUFFSIZE];
    char ws_request[BUFFSIZE];
 
-   struct hostent *hp; /*À¥¼­¹öÀÇ ÁÖ¼Ò¸¦ µµ¸ÞÀÎÀ¸·Î ¹Þ±âÀ§ÇÑ ÁÖ¼Ò ±¸Á¶Ã¼.*/
+   struct hostent *hp; /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼Ò¸ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ±ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼.*/
    struct sockaddr_in web_serv;
 
    bzero(response, sizeof(response));      
@@ -128,7 +128,7 @@ void  CONNECT_WEB_SERV( char *buf, char *whole_dir )
       exit(1);
    }
    
-   /*domain name¸¸À» parsing*/
+   /*domain nameï¿½ï¿½ï¿½ï¿½ parsing*/
    for(a=0;a<DNSIZE;a++)
    {                        
       if( buf[a] == '/' )
@@ -143,11 +143,11 @@ void  CONNECT_WEB_SERV( char *buf, char *whole_dir )
       }
    }
   
-   /* À¥¼­¹öÀÇ ÁÖ¼Ò¿¡ ´ëÇÑ Á¤º¸¸¦ ¹Þ´Â´Ù.*/
+   /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ö¼Ò¿ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Þ´Â´ï¿½.*/
    if( (hp = gethostbyname(domain_name)) == NULL )             
    {
-      ERRPAGE(domain_name);               /*Ãß°¡ ±¸Çö ÇÔ¼ö*/       
-      ACCESS_LOCAL_CACHE("./error.html"); /*      "      */
+      errpage(domain_name);               /*ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½*/       
+      access_local_cache("./error.html"); /*      "      */
       exit(1);  
    }
 
@@ -164,29 +164,29 @@ void  CONNECT_WEB_SERV( char *buf, char *whole_dir )
       exit(1);
    } 
            
-   /* À¥¼­¹ö°¡ MovedµîÀÇ ¿¡·¯·Î Á¦´ë·Î µÈ response¸¦ ¹Þ¾Æ¿Ã ¼ö ¾ø°Ô µÇ±â¶§¹®¿¡ request header
-   ¸¦ ´Ù½Ã ÆÄ½ÌÇÏ´Â ÇÔ¼öÀÌ´Ù.*/        
-   GET_WS_REQUEST(buf, ws_request);
+   /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ Movedï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ responseï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ç±â¶§ï¿½ï¿½ï¿½ï¿½ request header
+   ï¿½ï¿½ ï¿½Ù½ï¿½ ï¿½Ä½ï¿½ï¿½Ï´ï¿½ ï¿½Ô¼ï¿½ï¿½Ì´ï¿½.*/        
+   get_ws_request(buf, ws_request);
 
-   /* cache¿¡ À¥¼­¹ö·ÎºÎÅÍ ¹Þ¾Æ¿Ã µ¥ÀÌÅ¸¸¦ ÀúÀåÇÒ ÆÄÀÏÀ» À§ÇØ open() */
+   /* cacheï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Îºï¿½ï¿½ï¿½ ï¿½Þ¾Æ¿ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ open() */
    qfile = open( whole_dir, O_WRONLY | O_CREAT, 0666 );  
    
-   write(connect_sd, ws_request, BUFFSIZE ); /* À¥¼­¹ö·Î request header Àü¼Û.*/
+   write(connect_sd, ws_request, BUFFSIZE ); /* ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ request header ï¿½ï¿½ï¿½ï¿½.*/
  
    do{                                                                   
       alarm(TIMEOUT);                                                   
       while( (read_n = read(connect_sd, response, MAXLINE )) > 0 )       
       {                                                                 
           do{                                                            
-             write_n = write(accept_sd, response, read_n);/*Å¬¶óÀÌ¾ðÆ®·Î µ¥ÀÌÅ¸ Àü¼Û.*/  
-             write( qfile, response, read_n );            /*cache·Î µ¥ÀÌÅ¸ ÀúÀå.    */
+             write_n = write(accept_sd, response, read_n);/*Å¬ï¿½ï¿½ï¿½Ì¾ï¿½Æ®ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½ï¿½.*/  
+             write( qfile, response, read_n );            /*cacheï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å¸ ï¿½ï¿½ï¿½ï¿½.    */
              bzero(response, sizeof(response)); 
           }while( write_n == -1 && errno == EINTR);                                                                                                    
       }                                                                 
    }while( read_n == -1 && errno == EINTR );                            
 
    close(qfile);       
-   close(accept_sd);       /* ÆÄÀÏ µð½ºÅ©¸³ÅÍ, ¼ÒÄÏµð½ºÅ©¸³ÅÍ¸¦ ¸ðµÎ ´Ý´Â´Ù. ¿¬°á Á¾·á.*/              
+   close(accept_sd);       /* ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½ï¿½, ï¿½ï¿½ï¿½Ïµï¿½ï¿½ï¿½Å©ï¿½ï¿½ï¿½Í¸ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ý´Â´ï¿½. ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½.*/              
    close(connect_sd);
 
    printf("MISS : [ip:%s] ", inet_ntoa(web_serv.sin_addr));
@@ -195,9 +195,9 @@ void  CONNECT_WEB_SERV( char *buf, char *whole_dir )
 }
 
 /*******************************************************************************************
-HIT ÀÏ¶§ ¼öÇàµÇ´Â ÇÔ¼ö·Î¼­ À¥¼­¹ö·ÎÀÇ connect¼öÇà ±¸ÇöÀº Á¦°ÅµÈ´Ù. local serverÀÇ cache¸¦ Access
+HIT ï¿½Ï¶ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ç´ï¿½ ï¿½Ô¼ï¿½ï¿½Î¼ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ connectï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ÅµÈ´ï¿½. local serverï¿½ï¿½ cacheï¿½ï¿½ Access
 *******************************************************************************************/
-void  ACCESS_LOCAL_CACHE( char *whole_dir )
+void  access_local_cache( char *whole_dir )
 {
    int qfile, read_n; 
    char filebuf[BUFFSIZE];
@@ -213,9 +213,9 @@ void  ACCESS_LOCAL_CACHE( char *whole_dir )
 }
 
 /**************************************************************************
-REQUEST header¿¡¼­ http://xxx.xxx.xxx/xxx/xxx/xxx.xx ºÎºÐ¸¸À» Àß¶ó³»´Â ÇÔ¼ö.
+REQUEST headerï¿½ï¿½ï¿½ï¿½ http://xxx.xxx.xxx/xxx/xxx/xxx.xx ï¿½ÎºÐ¸ï¿½ï¿½ï¿½ ï¿½ß¶ó³»´ï¿½ ï¿½Ô¼ï¿½.
 ***************************************************************************/
-char *  GET_HASH_URL( char *buf ) 
+char *  get_hash_url( char *buf ) 
 {
    char temp[BUFFSIZE];
    char *hash_input;
@@ -231,25 +231,25 @@ char *  GET_HASH_URL( char *buf )
 }
 
 /**************************************************
-domain nameÀÌ Á¦°ÅµÈ REQUEST header¸¦ ¾ò¾î³»´Â ÇÔ¼ö.
+domain nameï¿½ï¿½ ï¿½ï¿½ï¿½Åµï¿½ REQUEST headerï¿½ï¿½ ï¿½ï¿½ï¿½î³»ï¿½ï¿½ ï¿½Ô¼ï¿½.
 ***************************************************/
-void  GET_WS_REQUEST( char *buf, char *ws_request)
+void  get_ws_request( char *buf, char *ws_request)
 {
    int i,j;
    int a=0, b=0;
 
-   /* ' '¸¦ ¸¸³¯¶§±îÁö º¹»çÇØ³ª°£´Ù. ' 'ºÎºÐÀÇ ¹è¿­À§Ä¡¸¦ ÀúÀå. */
+   /* ' 'ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Ø³ï¿½ï¿½ï¿½ï¿½ï¿½. ' 'ï¿½Îºï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½Ä¡ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½. */
    for(i=0;i<BUFFSIZE;i++)
    {
        ws_request[i] = buf[i]; 
        if( buf[i] == ' ' ) break;
    }
  
-   /* '/'¹®ÀÚ°¡ 3¹ø ³ª¿Ã¶§±îÁö ¹è¿­À» ¶Ù¾î³Ñ´Â´Ù. 3¹ø³ª¿ÔÀ»¶§ À§Ä¡ÀúÀå.*/
+   /* '/'ï¿½ï¿½ï¿½Ú°ï¿½ 3ï¿½ï¿½ ï¿½ï¿½ï¿½Ã¶ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½è¿­ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½Ñ´Â´ï¿½. 3ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½Ä¡ï¿½ï¿½ï¿½ï¿½.*/
    while( b < 3 )
       if( buf[a++] == '/' ) 
          b++;
-   /* ' '¹®ÀÚºÎÅÍ '/'¹®ÀÚ°¡ 3¹ø ³ª¿Â°÷±îÁö¸¦ ¶Ù¾î³Ñ°í ´Ù½Ã ¹è¿­ º¹»ç.*/
+   /* ' 'ï¿½ï¿½ï¿½Úºï¿½ï¿½ï¿½ '/'ï¿½ï¿½ï¿½Ú°ï¿½ 3ï¿½ï¿½ ï¿½ï¿½ï¿½Â°ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½Ù¾ï¿½ï¿½Ñ°ï¿½ ï¿½Ù½ï¿½ ï¿½è¿­ ï¿½ï¿½ï¿½ï¿½.*/
    for(j=0;j<BUFFSIZE-i;j++)
    {
       ws_request[j+i+1] = buf[a+j-1];
@@ -259,9 +259,9 @@ void  GET_WS_REQUEST( char *buf, char *ws_request)
 } 
 
 
-static void  MY_ALARM( int signo )
+static void  my_alarm( int signo )
 {
-   if( signal(SIGALRM, MY_ALARM) ==  SIG_ERR)
+   if( signal(SIGALRM, my_alarm) ==  SIG_ERR)
       perror("signal error");
    close(accept_sd);
    close(connect_sd);
@@ -270,12 +270,12 @@ static void  MY_ALARM( int signo )
 }
 
 
-static void  SIG_CLD( int signo )
+static void  sig_cld( int signo )
 {
    pid_t pid;
    int status;
    //printf("child terminated.\n");
-   if( signal(SIGCHLD, SIG_CLD) == SIG_ERR )
+   if( signal(SIGCHLD, sig_cld) == SIG_ERR )
       perror("signal error");
    if( (pid = wait(&status)) < 0)
       perror("wait error");
@@ -284,11 +284,11 @@ static void  SIG_CLD( int signo )
 
 
 /*************************************************************************
-Ãß°¡ ±¸Çö ÇÔ¼ö·Î¼­ hostent ÁÖ¼Ò ±¸Á¶Ã¼ÀÇ ¸®ÅÏµÈ Æ÷ÀÎÅÍ°ªÀÌ ³ÎÀÏ °æ¿ì Áï, Á¸Àç
-ÇÏÁö ¾Ê´Â urlÀÌ ÀÔ·ÂÀ¸·Î µé¾î¿ÔÀ»¶§ (proxy server¿¡¼­) ÀÓÀÇ·Î À¥ºê¶ó¿ìÁ®¿¡°Ô 
-º¸¿©Áú À¥ÆäÀÌÁö¸¦ ¸¸µç´Ù.
+ï¿½ß°ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½Ô¼ï¿½ï¿½Î¼ï¿½ hostent ï¿½Ö¼ï¿½ ï¿½ï¿½ï¿½ï¿½Ã¼ï¿½ï¿½ ï¿½ï¿½ï¿½Ïµï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½Í°ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½, ï¿½ï¿½ï¿½ï¿½
+ï¿½ï¿½ï¿½ï¿½ ï¿½Ê´ï¿½ urlï¿½ï¿½ ï¿½Ô·ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ (proxy serverï¿½ï¿½ï¿½ï¿½) ï¿½ï¿½ï¿½Ç·ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ 
+ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½.
 **************************************************************************/ 
-void ERRPAGE(char *url)
+void errpage(char *url)
 {
     char msg[300];
     int er;
